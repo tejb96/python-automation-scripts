@@ -54,39 +54,20 @@ class bcolors:
 
 
 def gfindWindow(data):
-    # Find the window ID based on the window name (data) and ensure it's visible on screen
+    # Find the window ID based on the window name (data)
     try:
-        # Use `xdotool search` to find windows by name (data)
-        window_ids = subprocess.check_output(['xdotool', 'search', '--name', data]).strip().splitlines()
-
-        if not window_ids:
-            print("No window found.")
-            return
-
-        # Filter out non-visible windows
-        visible_windows = []
-        for window_id in window_ids:
-            window_id = window_id.decode("utf-8")  # Decode byte string to a regular string
-
-            # Use `xprop` to check window properties and visibility
-            window_visibility = subprocess.check_output(['xprop', '-id', window_id, '_NET_WM_STATE']).decode('utf-8')
-
-            # If '_NET_WM_STATE_HIDDEN' is not in the xprop output, the window is visible
-            if '_NET_WM_STATE_HIDDEN' not in window_visibility:
-                visible_windows.append(window_id)
-
-        if visible_windows:
-            # Use the first visible window (or choose based on other criteria)
-            window_id = visible_windows[0]
-            print(f"Found visible matching window: {window_id}")
+        # Use `xdotool search` to find window by its name
+        window_id = subprocess.check_output(['xdotool', 'search', '--name', data]).strip()
+        if window_id:
+            window_id = window_id.decode("utf-8").split()[0]  # Get the first window ID if multiple matches
         else:
-            print("No visible window found.")
+            print("Window not found.")
             return
 
-        # Activate the window
+        # Use `xdotool windowactivate` to activate the window
         subprocess.run(['xdotool', 'windowactivate', window_id])
 
-        # Move and resize the window
+        # Move the window using `xdotool windowmove` and resize it
         subprocess.run(['xdotool', 'windowmove', window_id, '0', '0'])
         subprocess.run(['xdotool', 'windowsize', window_id, '865', '830'])
 
