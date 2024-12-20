@@ -1,0 +1,7 @@
+- Config:
+    client_title: RuneLite
+    enable_on_start: false
+    file_path_to_client: ''
+    pc_profile: /home/scripts/
+    tesseract_path: /usr/bin/
+
