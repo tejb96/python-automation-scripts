@@ -17,17 +17,36 @@ def findWindow_Linux(data):
 
 
 def getWindow_Linux(data):
-    # Use xdotool to find the window by name, get the geometry, and compute adjusted window size
-    rect = subprocess.check_output(["xdotool", "search", "--name", data, "getwindowgeometry"]).decode("utf-8")
-    rect_lines = rect.splitlines()
-    for line in rect_lines:
-        if "Geometry" in line:
-            geom = line.split()[1]
-            x, y, w, h = map(int, geom.split('x'))
-            # Adjust for client window borders
-            x, y, w, h = x + 0, y + 30, w - 50, h - 30
-            return x, y, w, h
-    return 0, 0, 865, 830  # Default if no window found
+    # Use subprocess.check_output to capture the window geometry
+    try:
+        # Focus the window with xdotool
+        subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
+
+        # Get the window geometry as a string
+        rect_output = subprocess.check_output(["xdotool", "getwindowfocus", "getwindowgeometry"]).decode("utf-8")
+
+        # Parse the output to extract the position and size
+        # Example output format: "Position: 61,161 (screen: 0)\nGeometry: 865x830"
+        rect_lines = rect_output.splitlines()
+
+        # Parse the position (x, y) and geometry (width, height)
+        position = rect_lines[0].split(' ')[1].split(',')
+        geometry = rect_lines[1].split(' ')[1].split('x')
+
+        x, y = map(int, position)
+        w, h = map(int, geometry)
+
+        # Adjust for borders (as described in your code)
+        y += 30  # Adjust for top border
+        w -= 50  # Adjust for side border
+        h -= 30  # Adjust for top border
+
+        # Return the coordinates and size
+        return x, y, w, h
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error while getting window geometry: {e}")
+        return None, None, None, None
 
 
 def findWindow_runelite():  # find window name returns PID of the window

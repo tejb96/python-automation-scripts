@@ -3,16 +3,7 @@ looked at xp drop img and it isnt accurate
 
 -cant do forestry fires
 
--scaling factor from functions.py not working: Scaling Factor: Failed, set to 100% | Actual: 1125.0%
-Font Size (approx): 12
-Display Resolution: 1920x1080
-Resolution: 1920 x 1080
-
--getting jagex files deleted message
-
-- window does get resized but still get mssg:
-XGetWindowProperty[_NET_WM_DESKTOP] failed (code=1)
-Window ID 6293775 activated and resized.
-Unable to find window: RuneLite - OGRS223 | Please see list of window names below:
-ChatGPT — Mozilla Firefox
+- woodcutting.py: lines 71 to 75 call core.py line 19 get window_linux function,
+it isnt running properly and raising the exception in the woodcutting.py file
+but not the exeption in core.py
 
