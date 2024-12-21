@@ -54,27 +54,7 @@ class bcolors:
 
 
 def gfindWindow(data):
-    # Find the window ID based on the window name (data)
-    try:
-        # Use `xdotool search` to find window by its name
-        window_id = subprocess.check_output(['xdotool', 'search', '--name', data]).strip()
-        if window_id:
-            window_id = window_id.decode("utf-8").split()[0]  # Get the first window ID if multiple matches
-        else:
-            print("Window not found.")
-            return
-
-        # Use `xdotool windowactivate` to activate the window
-        subprocess.run(['xdotool', 'windowactivate', window_id])
-
-        # Move the window using `xdotool windowmove` and resize it
-        subprocess.run(['xdotool', 'windowmove', window_id, '0', '0'])
-        subprocess.run(['xdotool', 'windowsize', window_id, '865', '830'])
-
-        print(f"Window ID {window_id} activated and resized.")
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error finding or manipulating window: {e}")
+    core.findWindow_Linux(data)
 
 
 with open("pybot-config.yaml", "r") as yamlfile:
@@ -531,8 +511,8 @@ clue_count = 0
 
 
 if __name__ == "__main__":
-    x_start = random.randrange(100, 350)
-    y_start = random.randrange(300, 500)
+    x_start = random.randrange(100, 450)
+    y_start = random.randrange(200, 500)
     pyautogui.click(x_start, y_start, button='right')
     ibreak = random.randrange(60, 121)
     timer_break = timer()
