@@ -50,32 +50,52 @@ class DeviceCap:
     VERTRES = 10
     DESKTOPVERTRES = 117
 
+
 def get_scaling_factor():
-    # Get the screen's root window
-    screen = display.Display().screen()
+    # Get the display connection
+    d = display.Display()
 
-    # Get the logical screen height in pixels
+    # Get the root window for the default screen
+    screen = d.screen()
+
+    # Screen resolution in pixels
     logical_screen_height = screen.height_in_pixels
+    logical_screen_width = screen.width_in_pixels
 
-    # Assume a default DPI (dots per inch), for example, 96 DPI is common
+    # Physical screen dimensions in mm from xrandr (you should replace these values with actual data)
+    screen_width_mm = 509  # Example value, from xrandr output (in mm)
+    screen_height_mm = 286  # Example value, from xrandr output (in mm)
+
+    # Convert physical dimensions to inches
+    screen_width_inch = screen_width_mm / 25.4
+    screen_height_inch = screen_height_mm / 25.4
+
+    # Calculate the diagonal in pixels and inches
+    diagonal_pixels = math.sqrt(logical_screen_width ** 2 + logical_screen_height ** 2)
+    diagonal_inch = math.sqrt(screen_width_inch ** 2 + screen_height_inch ** 2)
+
+    # Calculate DPI (dots per inch)
+    dpi = diagonal_pixels / diagonal_inch
+
+    # Assume a default DPI if calculation is unavailable
     default_dpi = 96
+    scaling_factor = dpi / default_dpi
 
-    # Calculate the scaling factor assuming a default DPI
-    # To approximate scaling factor, you may assume that the screen DPI is tied to logical pixels.
-    scaling_factor = logical_screen_height / default_dpi
+    # Close the display connection
+    d.close()
 
     return scaling_factor
 
 
 def get_os_configuration():
-    # Get the screen's root window
-    screen = display.Display().screen()
+    # Get the display connection
+    d = display.Display()
+
+    # Get the root window for the default screen
+    screen = d.screen()
 
     # Get scale (scaling factor)
     scaling_factor = get_scaling_factor()
-
-    if scaling_factor is None:
-        scaling_factor = 1.0  # Default to 100% if scaling factor couldn't be determined
 
     # Get display resolution information (width and height in pixels)
     width = screen.width_in_pixels
@@ -84,24 +104,30 @@ def get_os_configuration():
     # Font size in Linux: typically, font size is set by the desktop environment (GNOME/KDE)
     font_size = 12  # Default placeholder for font size, can be adjusted if needed
 
+    # Close the display connection
+    d.close()
+
     return scaling_factor, font_size, width, height
 
 
 # Usage
 scaling_factor, font_size, width, height = get_os_configuration()
+
 if scaling_factor == 1.0:
-    print(f"Scaling Factor: {scaling_factor * 100}% (default scaling)")
+    print(f"{bcolors.OK}Scaling Factor: {scaling_factor * 100}% (default scaling){bcolors.RESET}")
 else:
-    print(f"Scaling Factor: Failed, set to 100% | Actual: {scaling_factor * 100}%")
+    print(f"{bcolors.OK}Scaling Factor: {scaling_factor * 100}%{bcolors.RESET}")
 
 print(f"Font Size (approx): {font_size}")
 print(f"Display Resolution: {width}x{height}")
 
-
+# Check for a specific resolution
 if width == 1920 and height == 1080:
-    print(bcolors.OK + "Resolution:", width, "x", height)
+    print(f"{bcolors.OK}Resolution: {width} x {height}{bcolors.RESET}")
 else:
-    print(bcolors.FAIL + "Resolution not set correctly: Failed set to 1920 x 1080 | Actual:", width, "x", height)
+    print(f"{bcolors.FAIL}Resolution not set correctly: Failed set to 1920 x 1080 | Actual: {width} x {height}{bcolors.RESET}")
+
+
 try:
     print(bcolors.OK + "tesseract version:", pytesseract.get_tesseract_version())
 except SystemExit:

@@ -90,8 +90,7 @@ except BaseException:
 try:
     x_win, y_win, w_win, h_win = core.getWindow(data[0]['Config']['client_title'])
 except BaseException:
-    print("Unable to find window:", data[0]['Config']['client_title'], "| Please see list of window names below:")
-    core.printWindows()
+    print("core.getWindow failed to get window info for:", data[0]['Config']['client_title'])
     pass
 
 
@@ -537,9 +536,9 @@ clue_count = 0
 
 
 if __name__ == "__main__":
-    x = random.randrange(100, 250)
-    y = random.randrange(400, 500)
-    pyautogui.click(x, y, button='right')
+    x_start = random.randrange(100, 350)
+    y_start = random.randrange(300, 500)
+    pyautogui.click(x_start, y_start, button='right')
     ibreak = random.randrange(60, 121)
     timer_break = timer()
     # ----- OBJECT MARKER COLOR ------
