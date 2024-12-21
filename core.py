@@ -66,9 +66,9 @@ def getWindow_Linux(data):
         # print(f"x: {x}, y: {y}, w: {w}, h: {h}")
 
         # Adjust for borders (as described in your code)
-        y += 30  # Adjust for top border
-        w -= 50  # Adjust for side border
-        h -= 30  # Adjust for top border
+        # y += 30  # Adjust for top border
+        # w -= 50  # Adjust for side border
+        # h -= 30  # Adjust for top border
 
         print("done")
         # Return the coordinates and size

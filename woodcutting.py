@@ -68,6 +68,7 @@ except BaseException:
     pass
 
 x_win, y_win, w_win, h_win = core.getWindow_Linux(data[0]['Config']['client_title'])
+print(x_win,y_win,w_win,h_win)
 
 def random_break(start, c):
     global newTime_break
@@ -119,7 +120,7 @@ def get_live_info():
     try:
         f = open('live_data.json', "r+")
         data = json.load(f)
-        # print(data)
+        print("get_live_info",data)
         f.close()
         return data
     except:
@@ -129,7 +130,7 @@ def get_live_info():
 def update_pose():
     c = s.get("http://localhost:8080/events", stream=True)
     data = simplejson.loads(c.text)
-    # print(data)
+    print("update_pose",data)
     pose = data['animation pose']
     return pose
 
@@ -540,5 +541,5 @@ if __name__ == "__main__":
         , 'firespot_draynor_wood', 'firespot_lumbridge_wood']
 
     powercutter(red, 'willow', action_taken=woodcut_and_firemake,
-                spot='firespot_draynor_oak',
+                spot='firespot_draynor_willow',
                 Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)

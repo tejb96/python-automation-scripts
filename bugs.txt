@@ -1,9 +1,10 @@
 - not detecting that player is already chopping wood
 looked at xp drop img and it isnt accurate
+attempting to check woodcutting plugin, need to fix dimensions for it to work
+
 
 -cant do forestry fires
 
-- woodcutting.py: lines 71 to 75 call core.py line 19 get window_linux function,
-it isnt running properly and raising the exception in the woodcutting.py file
-but not the exeption in core.py
+- server.py needs to be checked, woodcutting.py references the server stream
 
+-window resizing might need to loop through mutltiple runelite windows
