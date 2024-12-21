@@ -20,34 +20,46 @@ def getWindow_Linux(data):
     # Use subprocess.check_output to capture the window geometry
     try:
         # Focus the window with xdotool
-        subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
+        subprocess.call(["xdotool", "search", "--name", data, "windowfocus"])
 
         # Get the window geometry as a string
-        rect_output = subprocess.check_output(["xdotool", "getwindowfocus", "getwindowgeometry"]).decode("utf-8")
+        window_output = subprocess.run(["xdotool", "getwindowfocus", "getwindowgeometry"], capture_output=True, text=True)
 
         # Parse the output to extract the position and size
         # Example output format: "Position: 61,161 (screen: 0)\nGeometry: 865x830"
-        rect_lines = rect_output.splitlines()
+        window_info = window_output.stdout.splitlines()  # Access stdout here
 
-        # Parse the position (x, y) and geometry (width, height)
-        position = rect_lines[0].split(' ')[1].split(',')
-        geometry = rect_lines[1].split(' ')[1].split('x')
+        # Print the raw output for debugging
+        # print(window_info)
 
+        # Check if we have the expected number of lines
+        if len(window_info) < 2:
+            print("Unexpected output format.")
+            return None, None, None, None
+
+        # Extracting position
+        position = window_info[1].split(': ')[1].split(' (')[0].split(',')
         x, y = map(int, position)
+
+        # Extracting geometry
+        geometry = window_info[2].split(': ')[1].split('x')
         w, h = map(int, geometry)
+
+        # Output
+        # print(f"x: {x}, y: {y}, w: {w}, h: {h}")
 
         # Adjust for borders (as described in your code)
         y += 30  # Adjust for top border
         w -= 50  # Adjust for side border
         h -= 30  # Adjust for top border
 
+        print("done")
         # Return the coordinates and size
         return x, y, w, h
 
     except subprocess.CalledProcessError as e:
         print(f"Error while getting window geometry: {e}")
         return None, None, None, None
-
 
 def findWindow_runelite():  # find window name returns PID of the window
     global hwnd

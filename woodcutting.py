@@ -55,7 +55,26 @@ class bcolors:
 
 def gfindWindow(data):
     # Find the window ID based on the window name (data)
-    core.findWindow_Linux(data)
+    try:
+        # Use `xdotool search` to find window by its name
+        window_id = subprocess.check_output(['xdotool', 'search', '--name', data]).strip()
+        if window_id:
+            window_id = window_id.decode("utf-8").split()[0]  # Get the first window ID if multiple matches
+        else:
+            print("Window not found.")
+            return
+
+        # Use `xdotool windowactivate` to activate the window
+        subprocess.run(['xdotool', 'windowactivate', window_id])
+
+        # Move the window using `xdotool windowmove` and resize it
+        subprocess.run(['xdotool', 'windowmove', window_id, '0', '0'])
+        subprocess.run(['xdotool', 'windowsize', window_id, '865', '830'])
+
+        print(f"Window ID {window_id} activated and resized.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error finding or manipulating window: {e}")
 
 
 with open("pybot-config.yaml", "r") as yamlfile:
@@ -68,12 +87,7 @@ except BaseException:
     core.printWindows()
     pass
 
-try:
-    x_win, y_win, w_win, h_win = core.getWindow_Linux(data[0]['Config']['client_title'])
-except BaseException:
-    print("core.getWindow_linux failed to get window info for:", data[0]['Config']['client_title'])
-    pass
-
+x_win, y_win, w_win, h_win = core.getWindow_Linux(data[0]['Config']['client_title'])
 
 def random_break(start, c):
     global newTime_break
