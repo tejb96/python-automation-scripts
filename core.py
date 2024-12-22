@@ -9,137 +9,149 @@ with open("pybot-config.yaml", "r") as yamlfile:
     data = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 
-def findWindow_Linux(data):
-    # Find the window ID based on the window name (data)
+def get_window_class(window_id):
+    """Get the WM_CLASS of a window given its ID."""
+    try:
+        window_class = subprocess.check_output(['xprop', '-id', window_id, 'WM_CLASS']).strip()
+        return window_class
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting window class for ID {window_id}: {e}")
+        return None
+
+
+def activate_and_resize_window(data):
+    """Find a window by name, activate it, and resize it."""
     try:
         # Use `xdotool search` to find window by its name
-        window_id = subprocess.check_output(['xdotool', 'search', '--name', data]).strip()
-        if window_id:
-            window_id = window_id.decode("utf-8").split()[0]  # Get the first window ID if multiple matches
-        else:
-            print("Window not found.")
-            return
+        window_ids = subprocess.check_output(['xdotool', 'search', '--name', data]).strip().split()
 
-        # Use `xdotool windowactivate` to activate the window
-        subprocess.run(['xdotool', 'windowactivate', window_id])
+        for window_id in window_ids:
+            window_id = window_id.decode("utf-8")
+            window_class = get_window_class(window_id)
 
-        # Move the window using `xdotool windowmove` and resize it
-        subprocess.run(['xdotool', 'windowmove', window_id, '0', '0'])
-        subprocess.run(['xdotool', 'windowsize', window_id, '865', '830'])
+            if window_class and b"net-runelite-client-RuneLite" in window_class:
+                # Activate the window
+                subprocess.run(['xdotool', 'windowactivate', window_id])
+                # Move and resize the window
+                subprocess.run(['xdotool', 'windowmove', window_id, '0', '30'])
+                subprocess.run(['xdotool', 'windowsize', window_id, '865', '830'])
+                print(f"Window ID {window_id} activated and resized.")
+                return
 
-        print(f"Window ID {window_id} activated and resized.")
-
+        print("Main window not found.")
     except subprocess.CalledProcessError as e:
         print(f"Error finding or manipulating window: {e}")
 
 
-def getWindow_Linux(data):
-    # Use subprocess.check_output to capture the window geometry
+def get_window_geometry(data):
+    """Focus the window and get its geometry, adjusting for any offsets from window manager decorations and RuneLite borders."""
     try:
-        # Focus the window with xdotool
-        subprocess.call(["xdotool", "search", "--name", data, "windowfocus"])
+        window_ids = subprocess.check_output(['xdotool', 'search', '--name', data]).strip().split()
 
-        # Get the window geometry as a string
-        window_output = subprocess.run(["xdotool", "getwindowfocus", "getwindowgeometry"], capture_output=True, text=True)
+        for window_id in window_ids:
+            window_id = window_id.decode("utf-8")
+            window_class = get_window_class(window_id)
 
-        # Parse the output to extract the position and size
-        # Example output format: "Position: 61,161 (screen: 0)\nGeometry: 865x830"
-        window_info = window_output.stdout.splitlines()  # Access stdout here
+            if window_class and b"net-runelite-client-RuneLite" in window_class:
+                subprocess.call(["xdotool", "windowactivate", window_id])
+                window_output = subprocess.run(["xdotool", "getwindowfocus", "getwindowgeometry"], capture_output=True,
+                                               text=True)
 
-        # Print the raw output for debugging
-        # print(window_info)
+                window_info = window_output.stdout.splitlines()
 
-        # Check if we have the expected number of lines
-        if len(window_info) < 2:
-            print("Unexpected output format.")
-            return None, None, None, None
+                if len(window_info) < 3:
+                    print("Unexpected output format.")
+                    return None, None, None, None
 
-        # Extracting position
-        position = window_info[1].split(': ')[1].split(' (')[0].split(',')
-        x, y = map(int, position)
+                # Extracting position
+                position = window_info[1].split(': ')[1].split(' (')[0].split(',')
+                x, y = map(int, position)
 
-        # Extracting geometry
-        geometry = window_info[2].split(': ')[1].split('x')
-        w, h = map(int, geometry)
+                # Adjusting for window manager offsets (e.g., title bar)
+                offset_x, offset_y = 61, 91 # Adjust these values based on your window manager
+                x -= offset_x
+                y -= offset_y
 
-        # Output
-        # print(f"x: {x}, y: {y}, w: {w}, h: {h}")
+                # Extracting geometry
+                geometry = window_info[2].split(': ')[1].split('x')
+                w, h = map(int, geometry)
 
-        # Adjust for borders (as described in your code)
-        # y += 30  # Adjust for top border
-        # w -= 50  # Adjust for side border
-        # h -= 30  # Adjust for top border
+                # # Adjust for RuneLite borders (top, side, and bottom borders)
+                # y += 40  # Add 30 pixels for the top border
+                # w -= 50  # Subtract 50 pixels for the side border
+                # h -= 30  # Subtract 30 pixels for the bottom border
 
-        print("done")
-        # Return the coordinates and size
-        return x, y, w, h
+                print("Adjusted Coordinates and size:", x, y, w, h)
+                return x, y, w, h
 
+        print("Main window not found.")
+        return None, None, None, None
     except subprocess.CalledProcessError as e:
         print(f"Error while getting window geometry: {e}")
         return None, None, None, None
 
-def findWindow_runelite():  # find window name returns PID of the window
-    global hwnd
-    # Use xdotool to search and manipulate the Runelite window
-    subprocess.call(["xdotool", "search", "--name", "RuneLite", "windowfocus", "%2"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
+# def findWindow_runelite():  # find window name returns PID of the window
+#     global hwnd
+#     # Use xdotool to search and manipulate the Runelite window
+#     subprocess.call(["xdotool", "search", "--name", "RuneLite", "windowfocus", "%2"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
+#
+#
+# def findWindow_openosrs():  # find window name returns PID of the window
+#     global hwnd
+#     # Use xdotool to search and manipulate the OpenOSRS window
+#     subprocess.call(["xdotool", "search", "--name", "OpenOSRS", "windowfocus", "%2"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
+#
+#
+# def findWindow(data):  # find window name returns PID of the window
+#     global hwnd
+#     # Use xdotool to search and manipulate the window by title
+#     subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
+#     subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
+#
+#
+# def getWindow(data):  # find window name returns PID of the window
+#     global hwnd
+#     # Use xdotool to search and focus the window, then get its geometry
+#     subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
+#     rect = subprocess.check_output(["xdotool", "getwindowfocus", "getwindowgeometry"]).decode("utf-8")
+#     rect_lines = rect.splitlines()
+#     for line in rect_lines:
+#         if "Geometry" in line:
+#             geom = line.split()[1]
+#             x, y, w, h = map(int, geom.split('x'))
+#             # Adjust for client window borders
+#             x, y, w, h = x + 0, y + 30, w - 50, h - 30
+#             return x, y, w, h
+#     return 0, 0, 865, 830  # Default if no window found
 
 
-def findWindow_openosrs():  # find window name returns PID of the window
-    global hwnd
-    # Use xdotool to search and manipulate the OpenOSRS window
-    subprocess.call(["xdotool", "search", "--name", "OpenOSRS", "windowfocus", "%2"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
+# def printWindows():
+#     # Use xdotool to list window titles
+#     windows = subprocess.check_output(["xdotool", "search", "--name", ""]).decode("utf-8")
+#     window_ids = windows.splitlines()
+#     for window_id in window_ids:
+#         title = subprocess.check_output(["xdotool", "getwindowname", window_id]).decode("utf-8").strip()
+#         if title:
+#             print(title)
 
 
-def findWindow(data):  # find window name returns PID of the window
-    global hwnd
-    # Use xdotool to search and manipulate the window by title
-    subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowmove", "0", "0"])
-    subprocess.call(["xdotool", "getwindowfocus", "windowsize", "865", "830"])
-
-
-def getWindow(data):  # find window name returns PID of the window
-    global hwnd
-    # Use xdotool to search and focus the window, then get its geometry
-    subprocess.call(["xdotool", "search", "--name", data, "windowfocus", "%2"])
-    rect = subprocess.check_output(["xdotool", "getwindowfocus", "getwindowgeometry"]).decode("utf-8")
-    rect_lines = rect.splitlines()
-    for line in rect_lines:
-        if "Geometry" in line:
-            geom = line.split()[1]
-            x, y, w, h = map(int, geom.split('x'))
-            # Adjust for client window borders
-            x, y, w, h = x + 0, y + 30, w - 50, h - 30
-            return x, y, w, h
-    return 0, 0, 865, 830  # Default if no window found
-
-
-def printWindows():
-    # Use xdotool to list window titles
-    windows = subprocess.check_output(["xdotool", "search", "--name", ""]).decode("utf-8")
-    window_ids = windows.splitlines()
-    for window_id in window_ids:
-        title = subprocess.check_output(["xdotool", "getwindowname", window_id]).decode("utf-8").strip()
-        if title:
-            print(title)
-
-
-print('Operating system:', platform.system())
-if platform.system() == 'Linux' or platform.system() == 'Darwin':  # Mac is also Unix-based, so adding 'Darwin'
-    try:
-        findWindow_Linux(data[0]['Config']['client_title'])
-    except BaseException:
-        print("Unable to find window:", data[0]['Config']['client_title'], "Please see list of window names below:")
-        printWindows()
-        pass
-else:
-    try:
-        findWindow(data[0]['Config']['client_title'])
-    except BaseException:
-        print("Unable to find window:", data[0]['Config']['client_title'], "| Please see list of window names below:")
-        printWindows()
-        pass
+# print('Operating system:', platform.system())
+# if platform.system() == 'Linux' or platform.system() == 'Darwin':  # Mac is also Unix-based, so adding 'Darwin'
+#     try:
+#         findWindow_Linux(data[0]['Config']['client_title'])
+#     except BaseException:
+#         print("Unable to find window:", data[0]['Config']['client_title'], "Please see list of window names below:")
+#         printWindows()
+#         pass
+# else:
+#     try:
+#         findWindow(data[0]['Config']['client_title'])
+#     except BaseException:
+#         print("Unable to find window:", data[0]['Config']['client_title'], "| Please see list of window names below:")
+#         printWindows()
+#         pass

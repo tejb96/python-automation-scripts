@@ -54,7 +54,7 @@ class bcolors:
 
 
 def gfindWindow(data):
-    core.findWindow_Linux(data)
+    core.activate_and_resize_window(data)
 
 
 with open("pybot-config.yaml", "r") as yamlfile:
@@ -67,7 +67,7 @@ except BaseException:
     core.printWindows()
     pass
 
-x_win, y_win, w_win, h_win = core.getWindow_Linux(data[0]['Config']['client_title'])
+x_win, y_win, w_win, h_win = core.get_window_geometry(data[0]['Config']['client_title'])
 print(x_win,y_win,w_win,h_win)
 
 def random_break(start, c):
@@ -515,6 +515,7 @@ if __name__ == "__main__":
     x_start = random.randrange(100, 450)
     y_start = random.randrange(200, 500)
     pyautogui.click(x_start, y_start, button='right')
+
     ibreak = random.randrange(60, 121)
     timer_break = timer()
     # ----- OBJECT MARKER COLOR ------
