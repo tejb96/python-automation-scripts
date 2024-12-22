@@ -7,4 +7,22 @@ attempting to check woodcutting plugin, need to fix dimensions for it to work
 
 - server.py needs to be checked, woodcutting.py references the server stream
 
--window resizing might need to loop through mutltiple runelite windows
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-SOLVED window resizing might need to loop through mutltiple runelite windows

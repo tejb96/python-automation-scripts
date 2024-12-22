@@ -7,8 +7,8 @@ def take_screenshot_of_game_window():
     # Adjusted coordinates and size from xwininfo, excluding side border
     relative_x = 0        # X coordinate remains the same (left edge of the window)
     relative_y = 69       # Y coordinate adjusted to account for the top offset
-    width = 830        # Reduced width to exclude the side border (estimate 30px each side)
-    height = 800          # Height adjusted to fit the content, as done before
+    width = 835        # Reduced width to exclude the side border (estimate 30px each side)
+    height = 830          # Height adjusted to fit the content, as done before
 
     # Ensure the directory exists
     os.makedirs('pyauto-images', exist_ok=True)
