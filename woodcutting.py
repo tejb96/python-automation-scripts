@@ -43,6 +43,7 @@ global timer
 global timer_break
 global ibreak
 
+global ex, ibreak, coords, cutting_text, time_left, powerlist, actions, t_end, wood_count, clue_count, invent_count, s_spot
 s = requests.session()
 
 
@@ -294,7 +295,6 @@ def doFireMaking(type):
     global invent_count, wood_count, actions, clue_count
     wood_burned = 0
 
-
     # Continue until we have enough wood
     while wood_count > 0:
         actions = 'Burning Wood'
@@ -305,69 +305,56 @@ def doFireMaking(type):
         # Simulate the random breaks
         random_breaks(0.1, 2)
 
-        # Light the fire first
+        # Light the fire first (only the first time)
         if wood_burned == 0:  # Check if it's the first time lighting a fire
-            Image_Rec_single('tinderbox.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
-            random_breaks(0.1, 1)
+            walk_here=False
+            if not walk_here:
+                walk_here = functions.find_Image('images/walk_here.png', 0, 100, 800, 700)
+            random_breaks(1, 4)
+            Image_Rec_single('tinderbox.png', 'lighting fire', 2, 2, 0.9, 'left', 8, False)
+            random_breaks(0.5, 1)
             Image_Rec_single(type + '_icon.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
             fire = False
             time_start = time.time()
             time_end = 0
             c = random.uniform(25, 35)
-            wood_burned+=1
+            wood_burned += 1
 
-            # while not fire:
-            #     wood_burned += 1
-            #     fire = xp_gain_check('firemaking_xp.png', 0.85)
-            #     if not fire:
-            #         fire = xp_gain_check('firemaking_xp2.png', 0.85)
-            #     actions = 'Lighting Fire: ' + str(fire) + ' | seconds count: %.2f' % time_end
-            #     time_end = time.time() - time_start
-            #     # Wait for a sufficient time to light the fire
-            #     c = random.uniform(25, 35)
-            #     if time_end > c:
-            #         invent_count = 0
-            #         fire = True
-            #         break
+        # Now, continue to add logs to the fire (this part will be done after fire is lit)
+        actions = 'Adding logs to fire'
 
-            # After lighting the fire, simulate adding logs to the fire
-            actions = 'Adding logs to fire'
-            while wood_count > 0:
-                # Take a screenshot of the area around the fire (x=350, y=425, w=100, h=100)
-                screenshot = pyautogui.screenshot(region=(350, 425, 100, 100))
-                screenshot.save('images/fire_screenshot.png')
+        if wood_count > 0:  # Check if there are any logs available
+            print("Adding log to fire")  # Debugging log
+            Image_Rec_single(type + '_icon.png', 'adding log to fire', 3, 3, 0.9, 'left', 8, False)
+            # random_breaks(30, 40)
 
-                # Look for the fire in the screenshot (fire.png)
-                fire_prompt = Image_count('images/fire.png')  # Detect the fire in the area (350, 425, 100, 100)
-                if fire_prompt > 0:  # If the fire is found, continue
-                    # Click the log in the inventory (simulating adding the log)
-                    Image_Rec_single('images/'+type + '_icon.png', 'adding log to fire', 5, 5, 0.9, 'left', 8, False)
-                    random_breaks(0.1, 2)
+            # Click on the fire to trigger the log prompt (ensure the image is being found correctly)
+            print('Running find image for fire')  # Debugging log
+            found = False
+            while not found:
+                found = functions.find_Image('images/fire.png', 5, 100, 550, 525)
 
-                    # Click on the fire to trigger the log prompt
-                    Image_Rec_single('/images/fire.png', 'adding logs to fire', 5, 5, 0.9, 'left', 8, False)
-                    random_breaks(0.1, 2)
 
-                    # Reduce the number of logs in the inventory
-                    wood_count -= 1
-                    actions = f'Adding log {wood_burned} to fire'
-                else:
-                    # If no fire prompt is detected, stop adding logs
-                    break
 
-                # Wait between actions to mimic human behavior (prevents bot detection)
-                random_breaks(0.1, 1)
+            # Randomly click anywhere in the prompt area (x=212, y=790, w=96, h=69)
+            prompt_area_x = random.randint(212, 212 + 96)
+            prompt_area_y = random.randint(790, 790 + 69)
+            pyautogui.click(prompt_area_x, prompt_area_y)
+            print("Log added")  # Debugging log
 
-                # Randomly click anywhere in the prompt area (x=212, y=790, w=96, h=69)
-                prompt_area_x = random.randint(212, 212 + 96)
-                prompt_area_y = random.randint(790, 790 + 69)
-                pyautogui.click(prompt_area_x, prompt_area_y)
+            time.sleep(2)  # Adjust time to ensure actions have enough time to process
 
-            # Check if we've added all logs or if the loop should stop
-            if wood_count <= 0:
-                break
+            # Reduce the number of logs in the inventory
+            wood_count -= 1
+            actions = f'Added log {wood_burned} to fire'
 
-        # Finish the process and check for XP gain
+        # Wait between actions to mimic human behavior (prevents bot detection)
+        random_breaks(0.1, 1)
+
+        # Break if no more wood is available
+        if wood_count <= 0:
+            break
+
     actions = 'Finished Adding Logs to Fire'
 
 
@@ -415,18 +402,19 @@ def doFireMaking(type):
 
 def doCutting(cutting, color, Take_Human_Break):
     global cutting_text, actions, coords
-    if cutting.strip().lower() != 'woodcutting' and cutting.strip().lower() != 'uoodcutting' and cutting.strip().lower() != 'voodcutting' and cutting.strip().lower() != 'joodcuttine' and cutting.strip().lower() != 'foodcuttir' and cutting.strip().lower() != 'foodcuttin' and cutting.strip().lower() != 'joodcuttinc':
+    cutting=cutting.strip().lower()
+    if cutting != 'woodcutting' and cutting != 'uoodcutting' and cutting != 'voodcutting' and cutting != 'joodcuttine' and cutting != 'foodcuttir' and cutting != 'foodcuttin' and cutting != 'joodcuttinc' or cutting == 'NOT woodcutting'or cutting== 'Not woodcutting' or cutting == 'not woodcutting':
         cutting_text = 'Not Cutting'
         random_breaks(0.2, 3)
-        coords = find_Object(color, 0, 0, 800, 700)
-        # random_breaks(8, 10)
-        time.sleep(1)
-        # if plugins_enabled:
-        #     skip()
-        #     waitforaction(808)
-        # else:
-        #     random_breaks(8, 10)
-    cutting_text = cutting.strip().lower()
+        coords = find_Object(color, 0, 100, 800, 700)
+
+    cutting_text = cutting
+    if coords:
+        print("sleeping for 38s")
+        click_tree=random.randrange(38,45)
+        time.sleep(click_tree)
+    else:
+        time.sleep(2)
     if skill_lvl_up() != 0:
         actions = 'leveled up...'
         random_breaks(0.2, 3)
@@ -476,9 +464,9 @@ def print_progress(time_left, coords, cutting_text, wood_count, clue_count, acti
           end='')
 
 
-def powercutter(color=0, type='wood', action_taken='none', spot='', ws=0, we=3, Take_Human_Break=False,
+def powercutter(color=0, type='wood', action_taken='none', spot='', Take_Human_Break=False,
                 Run_Duration_hours=6):
-    global ex, ibreak, coords, cutting_text, time_left, powerlist, actions, powerlist, t_end, wood_count, clue_count, invent_count, s_spot
+    global ex, ibreak, coords, cutting_text, time_left, powerlist, actions, t_end, wood_count, clue_count, invent_count, s_spot
     s_spot = spot
     powerlist = ['wood', 'oak', 'willow', 'maple', 'yew', 'magic', 'red']
     t_end = time.time() + (60 * 60 * Run_Duration_hours)
@@ -534,6 +522,8 @@ def powercutter(color=0, type='wood', action_taken='none', spot='', ws=0, we=3, 
         doCutting(cutting_text, color, Take_Human_Break)
 
 
+
+
 ex = False
 coords = (0, 0)
 actions = 'None'
@@ -580,6 +570,6 @@ if __name__ == "__main__":
     firespots = ['firespot_varrock_wood', 'firespot_draynor_willow', 'firespot_draynor_oak'
         , 'firespot_draynor_wood', 'firespot_lumbridge_wood']
 
-    powercutter(yellow, 'willow', action_taken=woodcut_and_firemake,
+    powercutter(red, 'willow', action_taken=woodcut_and_firemake,
                 spot='firespot_draynor_willow',
                 Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)

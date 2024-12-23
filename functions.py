@@ -1097,9 +1097,9 @@ def Image_Rec_single(image, event, iheight=5, iwidth=5, threshold=0.7, clicker='
     global icoord
     global iflag
     if playarea:
-        screen_Image(0, 0, 600, 750)
+        screen_Image(0, 69, 835, 899)
     else:
-        screen_Image(620, 480, 820, 750)
+        screen_Image(630, 552, 830, 827)
     img_rgb = cv2.imread('images/screenshot.png')
     # print('screenshot taken')
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
@@ -1128,8 +1128,8 @@ def Image_Rec_single(image, event, iheight=5, iwidth=5, threshold=0.7, clicker='
         # cv2.imwrite('res.png', img_rgb)
         # print(event, 'Found...')
         if playarea == False:
-            cropx = 620
-            cropy = 480
+            cropx = 630
+            cropy = 552
         else:
             cropx = 0
             cropy = 0
@@ -1427,3 +1427,44 @@ def findarea(object):
     # show the images
     cv2.imshow("Result", np.hstack([image, output]))
     cv2.waitKey(0)
+
+import cv2
+import pyautogui
+import numpy as np
+import random
+
+def find_Image(image_path, left=0, top=69, right=835, bottom=830):
+    # Take a screenshot of the specified region
+    screenshot = pyautogui.screenshot(region=(left, top, right, bottom))
+    screenshot.save('images/screenshot_find.png')
+
+    # Convert the screenshot to a NumPy array and then to grayscale
+    screenshot_np = np.array(screenshot)
+    screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2GRAY)
+
+    # Load the target image (the image to find)
+    target_img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+    # Perform template matching to find the image in the screenshot
+    result = cv2.matchTemplate(screenshot_gray, target_img, cv2.TM_CCOEFF_NORMED)
+
+    # Get the maximum match location
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+    # Check if the match is good enough
+    if max_val >= 0.8:  # Threshold for a successful match (adjust if needed)
+        # Calculate the coordinates of the match
+        match_x, match_y = max_loc
+        match_w, match_h = target_img.shape[::-1]
+
+        # Calculate the center of the match
+        center_x = match_x + match_w // 2 + left
+        center_y = match_y + match_h // 2 + top
+
+        # Move the mouse to the center of the found image and click
+        pyautogui.moveTo(center_x, center_y, duration=random.uniform(0.1, 0.9))
+        pyautogui.click(duration=random.uniform(0.01, 0.05))
+
+        return True
+    else:
+        return False
