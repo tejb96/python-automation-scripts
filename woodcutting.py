@@ -143,46 +143,46 @@ options = {0: random_inventory,
 #     return animation
 
 
-def moveAcross(move):
-    global s_spot
-    if move != 0:
-        if s_spot != 'firespot_draynor_willow':
-            random_breaks(0.1, 3)
-            x = random.randrange(20, 40)
-            y = random.randrange(-5, 5)
-            b = random.uniform(0.1, 0.7)
-            pyautogui.moveTo(743 + x, 110 + y, duration=b)
-            b = random.uniform(0.01, 0.3)
-            pyautogui.click(duration=b, button='left')
-            random_breaks(3, 5)
-            if move > 1:
-                x = random.randrange(20, 40)
-                y = random.randrange(-5, 5)
-                b = random.uniform(0.1, 0.7)
-                pyautogui.moveTo(743 + x, 110 + y, duration=b)
-                b = random.uniform(0.01, 0.3)
-                pyautogui.click(duration=b, button='left')
-                random_breaks(3, 5)
+# def moveAcross(move):
+#     global s_spot
+#     if move != 0:
+#         if s_spot != 'firespot_draynor_willow':
+#             random_breaks(0.1, 3)
+#             x = random.randrange(20, 40)
+#             y = random.randrange(-5, 5)
+#             b = random.uniform(0.1, 0.7)
+#             pyautogui.moveTo(743 + x, 110 + y, duration=b)
+#             b = random.uniform(0.01, 0.3)
+#             pyautogui.click(duration=b, button='left')
+#             random_breaks(3, 5)
+#             if move > 1:
+#                 x = random.randrange(20, 40)
+#                 y = random.randrange(-5, 5)
+#                 b = random.uniform(0.1, 0.7)
+#                 pyautogui.moveTo(743 + x, 110 + y, duration=b)
+#                 b = random.uniform(0.01, 0.3)
+#                 pyautogui.click(duration=b, button='left')
+#                 random_breaks(3, 5)
 
 
-def drop_wood(type):
-    global actions
-    actions = "dropping wood"
-    invent_crop()
-    drop_item()
-    image_Rec_clicker(type + '_icon.png', 'dropping item', 5, 5, 0.9, 'left', 10, False)
-    release_drop_item()
-    return "dropping done"
+# def drop_wood(type):
+#     global actions
+#     actions = "dropping wood"
+#     invent_crop()
+#     drop_item()
+#     image_Rec_clicker(type + '_icon.png', 'dropping item', 5, 5, 0.9, 'left', 10, False)
+#     release_drop_item()
+#     return "dropping done"
 
 
-def firespot(spot):
-    firespots = ['firespot_varrock_wood', 'firespot_draynor_willow', 'firespot_draynor_oak'
-        , 'firespot_farador_oak', 'firespot_draynor_wood', 'firespot_lumbridge_wood']
-
-    xy_firespots = [[45, 55], [50, 40], [30, 35], [25, 20], [25, 20], [-15, -5]]
-    x = xy_firespots[firespots.index(spot)][0]
-    y = xy_firespots[firespots.index(spot)][1]
-    mini_map_image(spot + '.png', x, y, 0.7, 'left', 15, 0)
+# def firespot(spot):
+#     firespots = ['firespot_varrock_wood', 'firespot_draynor_willow', 'firespot_draynor_oak'
+#         , 'firespot_farador_oak', 'firespot_draynor_wood', 'firespot_lumbridge_wood']
+#
+#     xy_firespots = [[45, 55], [50, 40], [30, 35], [25, 20], [25, 20], [-15, -5]]
+#     x = xy_firespots[firespots.index(spot)][0]
+#     y = xy_firespots[firespots.index(spot)][1]
+#     mini_map_image(spot + '.png', x, y, 0.7, 'left', 15, 0)
 
 
 def invent_enabled():
@@ -286,52 +286,89 @@ def Image_to_Text(preprocess, image, parse_config='--psm 7'):
     with Image.open(filename) as im:
         text = pytesseract.image_to_string(im, config=parse_config)
     os.remove(filename)
-    # print(text)
+    print("line 289",text)
     return text
 
 
-def doFireMaking(spot, type, ws, we):
+def doFireMaking(type):
     global invent_count, wood_count, actions, clue_count
     wood_burned = 0
-    if spot == '':
-        return
-    firespot(spot)
-    random_breaks(5, 8)
-    w = random.randrange(ws, we)
-    while invent_count > w:
+
+
+    # Continue until we have enough wood
+    while wood_count > 0:
         actions = 'Burning Wood'
         clue_count = Image_count('clue_nest.png')
         wood_count = Image_count(type + '_icon.png')
         invent_count = wood_count + clue_count
-        # print("wood: ", invent_count)
-        random_breaks(0.1, 2)
-        Image_Rec_single('tinderbox.png', 'burning wood', 5, 5, 0.9, 'left', 8, False)
-        random_breaks(0.1, 1)
-        Image_Rec_single(type + '_icon.png', 'burning wood', 5, 5, 0.9, 'left', 8, False)
-        fire = False
-        time_start = time.time()
-        time_end = 0
-        while not fire:
-            wood_burned += 1
-            fire = xp_gain_check('firemaking_xp.png', 0.85)
-            if not fire:
-                fire = xp_gain_check('firemaking_xp2.png', 0.85)
-            actions = 'Burning Wood: ' + str(fire) + ' | seconds count: %.2f' % time_end
-            time_end = time.time() - time_start
 
-            # print("seconds count: %.2f" % time_end)
+        # Simulate the random breaks
+        random_breaks(0.1, 2)
+
+        # Light the fire first
+        if wood_burned == 0:  # Check if it's the first time lighting a fire
+            Image_Rec_single('tinderbox.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
+            random_breaks(0.1, 1)
+            Image_Rec_single(type + '_icon.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
+            fire = False
+            time_start = time.time()
+            time_end = 0
             c = random.uniform(25, 35)
-            if time_end > c:
-                invent_count = 0
-                fire = True
+            wood_burned+=1
+
+            # while not fire:
+            #     wood_burned += 1
+            #     fire = xp_gain_check('firemaking_xp.png', 0.85)
+            #     if not fire:
+            #         fire = xp_gain_check('firemaking_xp2.png', 0.85)
+            #     actions = 'Lighting Fire: ' + str(fire) + ' | seconds count: %.2f' % time_end
+            #     time_end = time.time() - time_start
+            #     # Wait for a sufficient time to light the fire
+            #     c = random.uniform(25, 35)
+            #     if time_end > c:
+            #         invent_count = 0
+            #         fire = True
+            #         break
+
+            # After lighting the fire, simulate adding logs to the fire
+            actions = 'Adding logs to fire'
+            while wood_count > 0:
+                # Take a screenshot of the area around the fire (x=350, y=425, w=100, h=100)
+                screenshot = pyautogui.screenshot(region=(350, 425, 100, 100))
+                screenshot.save('images/fire_screenshot.png')
+
+                # Look for the fire in the screenshot (fire.png)
+                fire_prompt = Image_count('images/fire.png')  # Detect the fire in the area (350, 425, 100, 100)
+                if fire_prompt > 0:  # If the fire is found, continue
+                    # Click the log in the inventory (simulating adding the log)
+                    Image_Rec_single('images/'+type + '_icon.png', 'adding log to fire', 5, 5, 0.9, 'left', 8, False)
+                    random_breaks(0.1, 2)
+
+                    # Click on the fire to trigger the log prompt
+                    Image_Rec_single('/images/fire.png', 'adding logs to fire', 5, 5, 0.9, 'left', 8, False)
+                    random_breaks(0.1, 2)
+
+                    # Reduce the number of logs in the inventory
+                    wood_count -= 1
+                    actions = f'Adding log {wood_burned} to fire'
+                else:
+                    # If no fire prompt is detected, stop adding logs
+                    break
+
+                # Wait between actions to mimic human behavior (prevents bot detection)
+                random_breaks(0.1, 1)
+
+                # Randomly click anywhere in the prompt area (x=212, y=790, w=96, h=69)
+                prompt_area_x = random.randint(212, 212 + 96)
+                prompt_area_y = random.randint(790, 790 + 69)
+                pyautogui.click(prompt_area_x, prompt_area_y)
+
+            # Check if we've added all logs or if the loop should stop
+            if wood_count <= 0:
                 break
-    drop_wood(type)
-    if wood_burned <= 5:
-        moveAcross(0)
-    if wood_burned >= 5 and wood_burned <= 10:
-        moveAcross(1)
-    if wood_burned > 10:
-        moveAcross(2)
+
+        # Finish the process and check for XP gain
+    actions = 'Finished Adding Logs to Fire'
 
 
 # def doBanking(type):
@@ -486,14 +523,14 @@ def powercutter(color=0, type='wood', action_taken='none', spot='', ws=0, we=3, 
         # print("wood: ", invent_count)
         if invent_count > inv:
             if action_taken == 'firemake':
-                doFireMaking(spot, type, ws, we)
+                doFireMaking(type)
             # if action_taken == 'bank':
             #     doBanking(type)
             random_breaks(0.2, 5)
-            drop_wood(type)
+            # drop_wood(type)
             random_breaks(0.2, 5)
         cutting_text = Image_to_Text('thresh', 'textshot.png')
-        print(cutting_text)
+        # print(cutting_text)
         doCutting(cutting_text, color, Take_Human_Break)
 
 
@@ -543,6 +580,6 @@ if __name__ == "__main__":
     firespots = ['firespot_varrock_wood', 'firespot_draynor_willow', 'firespot_draynor_oak'
         , 'firespot_draynor_wood', 'firespot_lumbridge_wood']
 
-    powercutter(red, 'willow', action_taken=woodcut_and_firemake,
+    powercutter(yellow, 'willow', action_taken=woodcut_and_firemake,
                 spot='firespot_draynor_willow',
                 Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)

@@ -10,10 +10,15 @@ def take_screenshot_of_game_window():
     # w = 835        # Reduced width to exclude the side border (estimate 30px each side)
     # h = 830          # Height adjusted to fit the content, as done before
 
-    x=5
-    y=92
-    w=130
-    h=20
+    # x=350
+    # y=425
+    # w=100
+    # h=100
+
+    x = 212
+    y = 790
+    w = 96
+    h = 69
     # Ensure the directory exists
     os.makedirs('pyauto-images', exist_ok=True)
 

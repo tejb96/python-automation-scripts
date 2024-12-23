@@ -1,26 +1,10 @@
-- not detecting that player is already chopping wood
-looked at xp drop img and it isnt accurate
-attempting to check woodcutting plugin, need to fix dimensions for it to work
-
+- SOLVED: not detecting that player is already chopping wood
 
 -cant do forestry fires
 
+-after only tree in the area was chopped it clicked the red not woodcutting text based on the color red
+
 - server.py needs to be checked, woodcutting.py references the server stream
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
