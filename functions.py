@@ -775,34 +775,35 @@ def spaces(a):
 
 def skill_lvl_up():
     counter = 0
-    with mss.mss(display=":0") as sct:
-        # Capture the entire screen (or adjust to a specific region as needed)
-        screenshot = sct.grab(sct.monitors[1])
 
-        # Convert to a PIL Image
-        img_rgb = Image.frombytes("RGB", (screenshot.width, screenshot.height), screenshot.rgb)
+    # Capture the specific region using pyautogui.screenshot
+    screenshot = pyautogui.screenshot(region=(0, 735, 450, 140))
 
-        # Save it for debugging (optional)
-        img_rgb.save('images/screen.png')
+    # Convert the screenshot to a PIL Image
+    img_rgb = screenshot.convert("RGB")
 
-        # Convert to OpenCV image for processing
-        img_gray = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2GRAY)
+    # Save the screenshot for debugging (optional)
+    img_rgb.save('images/screen.png')
 
-        # Load template for matching
-        template = cv2.imread('images/Congrats_flag.png', 0)
-        w, h = template.shape[::-1]
+    # Convert the PIL Image to a NumPy array for OpenCV processing
+    img_gray = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2GRAY)
 
-        # Match the template
-        res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-        threshold = 0.8
-        loc = np.where(res >= threshold)
+    # Load the template for matching
+    template = cv2.imread('images/Congrats_flag.png', 0)
+    w, h = template.shape[::-1]
 
-        # Count matches
-        for pt in zip(*loc[::-1]):
-            cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-            counter += 1
+    # Match the template to the grayscale image
+    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.8
+    loc = np.where(res >= threshold)
+
+    # Count matches and draw rectangles around them
+    for pt in zip(*loc[::-1]):
+        cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        counter += 1
 
     return counter
+
 
 
 def skill_lvl_up_new():

@@ -14,17 +14,17 @@ def take_screenshot_of_game_window():
     # y=425
     # w=100
     # h=100
-
-    # x = 212
-    # y = 790
-    # w = 96
-    # h = 69
+#chat mssg
+    x = 0
+    y = 735
+    w = 450
+    h = 140
 
     #these are to check the inv ss dimensions:
-    x = 630
-    y = 552
-    w = 200
-    h = 275
+    # x = 630
+    # y = 552
+    # w = 200
+    # h = 275
 
     # Ensure the directory exists
     os.makedirs('pyauto-images', exist_ok=True)

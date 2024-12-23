@@ -1,8 +1,12 @@
+-skilllvlup in functions line 802 needs to be fixed
+
+
+
 - SOLVED: not detecting that player is already chopping wood
 
--cant do forestry fires
+-SOLVEDcant do forestry fires
 
--after only tree in the area was chopped it clicked the red not woodcutting text based on the color red
+-Solvedafter only tree in the area was chopped it clicked the red not woodcutting text based on the color red
 
 - server.py needs to be checked, woodcutting.py references the server stream
 

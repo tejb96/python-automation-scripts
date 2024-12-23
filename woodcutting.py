@@ -352,12 +352,14 @@ def doFireMaking(type):
             time.sleep(2)  # Adjust time to ensure actions have enough time to process
 
             # Reduce the number of logs in the inventory
-            wood_count -= 1
+
             actions = f'Added log {wood_burned} to fire'
 
         # Wait between actions to mimic human behavior (prevents bot detection)
-        random_breaks(0.1, 1)
-
+        # random_breaks(0.1, 1)
+        done=random.randint(70,90)
+        time.sleep(done)
+        wood_count=0
         # Break if no more wood is available
         if wood_count <= 0:
             break
@@ -418,7 +420,7 @@ def doCutting(cutting, color, Take_Human_Break):
     cutting_text = cutting
     if coords:
         print("sleeping for 38s")
-        click_tree=random.randrange(38,45)
+        click_tree=random.randrange(38,65)
         time.sleep(click_tree)
     else:
         time.sleep(2)
