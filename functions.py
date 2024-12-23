@@ -1116,32 +1116,64 @@ def Image_Rec_single(image, event, iheight=5, iwidth=5, threshold=0.7, clicker='
     icoord = (0, 0)
     iflag = False
     event = event
+    # Initialize the list to hold all matching coordinates
+    all_matches = []
+
+    # Iterate through the matched coordinates and store them in the list
     for pt in zip(*loc[::-1]):
-        cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    # print('result of pt')
-    if pt is None:
-        iflag = False
-        return iflag, icoord
-        # print(event, 'Not Found...')
-    else:
-        iflag = True
-        # cv2.imwrite('res.png', img_rgb)
-        # print(event, 'Found...')
+        all_matches.append(pt)
+
+    # Now `all_matches` contains all matching coordinates
+    # Check if the list is not empty
+    # for match in all_matches:
+    #     print(match)
+
+    if len(all_matches) > 0:
+        # Take the first match from the list
+        match_length = len(all_matches)
+        if match_length<=3:
+            match = all_matches[0]
+        elif 6 >= match_length > 3:
+            match=all_matches[random.randint(0,6)]
+        else:
+            selection=random.randint(0,match_length-1)
+            match=all_matches[selection]
+
+        # # Draw a rectangle around the first match (just for visualization)
+        # cv2.rectangle(img_rgb, first_match, (first_match[0] + w, first_match[1] + h), (0, 0, 255), 2)
+
+        # Process the first match (clicking it)
         if playarea == False:
             cropx = 630
             cropy = 552
         else:
             cropx = 0
             cropy = 0
+
+        # Randomize the click coordinates based on provided width and height
         x = random.randrange(iwidth, iwidth + ispace) + cropx
         y = random.randrange(iheight, iheight + ispace) + cropy
-        icoord = pt[0] + iheight + x
-        icoord = (icoord, pt[1] + iwidth + y)
-        b = random.uniform(0.1, 0.7)
+
+        # Add the offset to the first match coordinates
+        icoord = match[0] + iheight + x
+        icoord = (icoord, match[1] + iwidth + y)
+
+        # print(icoord)
+
+        # Move the mouse to the coordinates and click
+        b = random.uniform(0.9, 1.5)
         pyautogui.moveTo(icoord, duration=b)
         b = random.uniform(0.01, 0.3)
         pyautogui.click(icoord, duration=b, button=clicker)
-    return iflag, icoord
+        print('click performed returning true')
+        # Set the flag to True since the first match was found and clicked
+        return True
+    else:
+        # No matches found
+        return False
+
+
+
 
 
 def Image_Rec_single_closest(image, threshold=0.7, clicker='left', playarea=True):

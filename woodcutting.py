@@ -314,22 +314,26 @@ def doFireMaking(type):
             Image_Rec_single('tinderbox.png', 'lighting fire', 2, 2, 0.9, 'left', 8, False)
             random_breaks(0.5, 1)
             Image_Rec_single(type + '_icon.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
+            c = random.uniform(0.9, 2)
+            time.sleep(c)
             fire = False
             time_start = time.time()
             time_end = 0
-            c = random.uniform(25, 35)
+
             wood_burned += 1
 
         # Now, continue to add logs to the fire (this part will be done after fire is lit)
         actions = 'Adding logs to fire'
 
-        if wood_count > 0:  # Check if there are any logs available
-            print("Adding log to fire")  # Debugging log
-            Image_Rec_single(type + '_icon.png', 'adding log to fire', 3, 3, 0.9, 'left', 8, False)
-            # random_breaks(30, 40)
-
+        if wood_count > 0 and wood_burned==1:  # Check if there are any logs available
+            # print("Adding log to fire")  # Debugging log
+            log_selected=False
+            while not log_selected:
+                log_selected=Image_Rec_single(type + '_icon.png', 'lighting fire', 5, 5, 0.9, 'left', 8, False)
+                # print('line331',log_selected)
+            time.sleep(10)
             # Click on the fire to trigger the log prompt (ensure the image is being found correctly)
-            print('Running find image for fire')  # Debugging log
+            # print('Running find image for fire')  # Debugging log
             found = False
             while not found:
                 found = functions.find_Image('images/fire.png', 5, 100, 550, 525)
@@ -337,9 +341,12 @@ def doFireMaking(type):
 
 
             # Randomly click anywhere in the prompt area (x=212, y=790, w=96, h=69)
+            time.sleep(3)
             prompt_area_x = random.randint(212, 212 + 96)
             prompt_area_y = random.randint(790, 790 + 69)
-            pyautogui.click(prompt_area_x, prompt_area_y)
+            # pyautogui.click(prompt_area_x, prompt_area_y)
+            pyautogui.moveTo(prompt_area_x, prompt_area_y, duration=random.uniform(0.1, 2))
+            pyautogui.click(duration=random.uniform(0.01, 0.05))
             print("Log added")  # Debugging log
 
             time.sleep(2)  # Adjust time to ensure actions have enough time to process
