@@ -630,7 +630,7 @@ def find_Object(item, left=0, top=0, right=0, bottom=0):
         # print('x: ', x)
         y = random.randrange(y + 5, y + max(h - 5, 6)) + top  # 490,500
         # print('y: ', y)
-        b = random.uniform(0.1, 0.4)
+        b = random.uniform(0.9, 1.5)
         pyautogui.moveTo(x, y, duration=b)
         b = random.uniform(0.01, 0.05)
         pyautogui.click(duration=b)
