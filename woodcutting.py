@@ -115,32 +115,32 @@ options = {0: random_inventory,
            4: random_pause}
 
 
-def get_live_info():
-    '''Returns specific live information from the game client via the Status Socket plugin.'''
-    try:
-        f = open('live_data.json', "r+")
-        data = json.load(f)
-        print("get_live_info",data)
-        f.close()
-        return data
-    except:
-        pass
-
-
-def update_pose():
-    c = s.get("http://localhost:8080/events", stream=True)
-    data = simplejson.loads(c.text)
-    print("update_pose",data)
-    pose = data['animation pose']
-    return pose
-
-
-def update_animation():
-    c = s.get("http://localhost:8080/events", stream=True)
-    data = simplejson.loads(c.text)
-    # print(data)
-    animation = data['animation']
-    return animation
+# def get_live_info():
+#     '''Returns specific live information from the game client via the Status Socket plugin.'''
+#     try:
+#         f = open('live_data.json', "r+")
+#         data = json.load(f)
+#         print("get_live_info",data)
+#         f.close()
+#         return data
+#     except:
+#         pass
+#
+#
+# def update_pose():
+#     c = s.get("http://localhost:8080/events", stream=True)
+#     data = simplejson.loads(c.text)
+#     print("update_pose",data)
+#     pose = data['animation pose']
+#     return pose
+#
+#
+# def update_animation():
+#     c = s.get("http://localhost:8080/events", stream=True)
+#     data = simplejson.loads(c.text)
+#     # print(data)
+#     animation = data['animation']
+#     return animation
 
 
 def moveAcross(move):
@@ -237,14 +237,15 @@ def change_brown_black():
 
 
 def resize_quick():
-    left = 25
-    top = 49
-    right = 135
-    bottom = 70
+    left = x_win+5
+    top = y_win+23
+    w = 130
+    h = 20
 
-    im = ImageGrab.grab(bbox=(left, top, right, bottom))
-    im.save('images/screen_resize.png', 'png')
-
+    screenshot_path='images/screen_resize.png'
+    screenshot = pyautogui.screenshot(region=(left, top, w, h))
+    screenshot.save(screenshot_path)
+    print(f"Screenshot saved as '{screenshot_path}'")
 
 def resizeImage():
     resize_quick()
@@ -333,46 +334,46 @@ def doFireMaking(spot, type, ws, we):
         moveAcross(2)
 
 
-def doBanking(type):
-    global actions
-    invent = invent_enabled()
-    if invent == 0:
-        actions = 'open inventory'
-        pyautogui.press('esc')
-    mini_map_image('draynor_bank_spot.png', 10, 40, 0.8, 'left', 10, 10)
-    time.sleep(1)
-    if plugins_enabled:
-        waitforaction(808)
-    else:
-        random_breaks(9.5, 11)
-    random_breaks(0, 2)
-    bank_spot()
-    time.sleep(1)
-    if plugins_enabled:
-        waitforaction(808)
-    else:
-        random_breaks(2, 5)
-    random_breaks(0, 2)
-    bank = deposit_bank_items(type)
-    time.sleep(1)
-    if plugins_enabled:
-        waitforaction(808)
-    else:
-        random_breaks(9.5, 11)
-    random_breaks(0, 2)
-    while bank == 0:
-        bank = deposit_bank_items(type)
-    random_breaks(0, 1)
+# def doBanking(type):
+#     global actions
+#     invent = invent_enabled()
+#     if invent == 0:
+#         actions = 'open inventory'
+#         pyautogui.press('esc')
+#     mini_map_image('draynor_bank_spot.png', 10, 40, 0.8, 'left', 10, 10)
+#     time.sleep(1)
+#     if plugins_enabled:
+#         waitforaction(808)
+#     else:
+#         random_breaks(9.5, 11)
+#     random_breaks(0, 2)
+#     bank_spot()
+#     time.sleep(1)
+#     if plugins_enabled:
+#         waitforaction(808)
+#     else:
+#         random_breaks(2, 5)
+#     random_breaks(0, 2)
+#     bank = deposit_bank_items(type)
+#     time.sleep(1)
+#     if plugins_enabled:
+#         waitforaction(808)
+#     else:
+#         random_breaks(9.5, 11)
+#     random_breaks(0, 2)
+#     while bank == 0:
+#         bank = deposit_bank_items(type)
+#     random_breaks(0, 1)
 
 
-def waitforaction(num):
-    global actions
-    get_live_info()
-    pose = update_pose()
-    while pose != num:
-        time.sleep(0.1)
-        actions = "moving - " + str(pose)
-        pose = update_pose()
+# def waitforaction(num):
+#     global actions
+#     get_live_info()
+#     pose = update_pose()
+#     while pose != num:
+#         time.sleep(0.1)
+#         actions = "moving - " + str(pose)
+#         pose = update_pose()
 
 
 def doCutting(cutting, color, Take_Human_Break):
@@ -383,10 +384,11 @@ def doCutting(cutting, color, Take_Human_Break):
         coords = find_Object(color, 0, 0, 800, 700)
         # random_breaks(8, 10)
         time.sleep(1)
-        if plugins_enabled:
-            waitforaction(808)
-        else:
-            random_breaks(8, 10)
+        # if plugins_enabled:
+        #     skip()
+        #     waitforaction(808)
+        # else:
+        #     random_breaks(8, 10)
     cutting_text = cutting.strip().lower()
     if skill_lvl_up() != 0:
         actions = 'leveled up...'
@@ -485,13 +487,13 @@ def powercutter(color=0, type='wood', action_taken='none', spot='', ws=0, we=3, 
         if invent_count > inv:
             if action_taken == 'firemake':
                 doFireMaking(spot, type, ws, we)
-            if action_taken == 'bank':
-                doBanking(type)
+            # if action_taken == 'bank':
+            #     doBanking(type)
             random_breaks(0.2, 5)
             drop_wood(type)
             random_breaks(0.2, 5)
         cutting_text = Image_to_Text('thresh', 'textshot.png')
-        # print(cutting_text)
+        print(cutting_text)
         doCutting(cutting_text, color, Take_Human_Break)
 
 

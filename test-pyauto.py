@@ -1,15 +1,19 @@
 import pyautogui
 import time
 import os
-from PIL import Image
+
 
 def take_screenshot_of_game_window():
     # Adjusted coordinates and size from xwininfo, excluding side border
-    relative_x = 0        # X coordinate remains the same (left edge of the window)
-    relative_y = 69       # Y coordinate adjusted to account for the top offset
-    width = 835        # Reduced width to exclude the side border (estimate 30px each side)
-    height = 830          # Height adjusted to fit the content, as done before
+    # x = 0        # X coordinate remains the same (left edge of the window)
+    # y = 69       # Y coordinate adjusted to account for the top offset
+    # w = 835        # Reduced width to exclude the side border (estimate 30px each side)
+    # h = 830          # Height adjusted to fit the content, as done before
 
+    x=5
+    y=92
+    w=130
+    h=20
     # Ensure the directory exists
     os.makedirs('pyauto-images', exist_ok=True)
 
@@ -20,7 +24,7 @@ def take_screenshot_of_game_window():
     time.sleep(1)
 
     # Capture the screenshot of the game window excluding the title bar, borders, and side border
-    screenshot = pyautogui.screenshot(region=(relative_x, relative_y, width, height))
+    screenshot = pyautogui.screenshot(region=(x, y, w, h))
     screenshot.save(screenshot_path)
     print(f"Screenshot saved as '{screenshot_path}'")
 

@@ -46,43 +46,51 @@ def activate_and_resize_window(data):
 def get_window_geometry(data):
     """Focus the window and get its geometry, adjusting for any offsets from window manager decorations and RuneLite borders."""
     try:
+        # Get the window IDs of the matching windows
         window_ids = subprocess.check_output(['xdotool', 'search', '--name', data]).strip().split()
 
         for window_id in window_ids:
             window_id = window_id.decode("utf-8")
+
+            # Get the window class to verify it's the correct RuneLite window
             window_class = get_window_class(window_id)
-
             if window_class and b"net-runelite-client-RuneLite" in window_class:
+                # Activate the window using xdotool
                 subprocess.call(["xdotool", "windowactivate", window_id])
-                window_output = subprocess.run(["xdotool", "getwindowfocus", "getwindowgeometry"], capture_output=True,
-                                               text=True)
 
-                window_info = window_output.stdout.splitlines()
+                # Call xwininfo to get the detailed window geometry
+                window_info = subprocess.check_output(["xwininfo", "-id", window_id], text=True)
 
-                if len(window_info) < 3:
-                    print("Unexpected output format.")
+                # Extracting absolute upper-left position (X, Y)
+                abs_x, abs_y = None, None
+                for line in window_info.splitlines():
+                    if line.startswith("  Absolute upper-left X:"):
+                        abs_x = int(line.split(":")[1].strip())
+                    elif line.startswith("  Absolute upper-left Y:"):
+                        abs_y = int(line.split(":")[1].strip())
+
+                # Extracting width and height
+                width, height = None, None
+                for line in window_info.splitlines():
+                    if line.startswith("  Width:"):
+                        width = int(line.split(":")[1].strip())
+                    elif line.startswith("  Height:"):
+                        height = int(line.split(":")[1].strip())
+
+                if abs_x is None or abs_y is None or width is None or height is None:
+                    print("Error: Could not extract all necessary window information.")
                     return None, None, None, None
 
-                # Extracting position
-                position = window_info[1].split(': ')[1].split(' (')[0].split(',')
-                x, y = map(int, position)
+                # Subtract 30 pixels from the width for the side border
+                width -= 30
 
-                # Adjusting for window manager offsets (e.g., title bar)
-                offset_x, offset_y = 61, 91 # Adjust these values based on your window manager
-                x -= offset_x
-                y -= offset_y
+                # Output the adjusted geometry
+                print("Adjusted Coordinates and size:", abs_x, abs_y, width, height)
+                return abs_x, abs_y, width, height
 
-                # Extracting geometry
-                geometry = window_info[2].split(': ')[1].split('x')
-                w, h = map(int, geometry)
-
-                # # Adjust for RuneLite borders (top, side, and bottom borders)
-                # y += 40  # Add 30 pixels for the top border
-                # w -= 50  # Subtract 50 pixels for the side border
-                # h -= 30  # Subtract 30 pixels for the bottom border
-
-                print("Adjusted Coordinates and size:", x, y, w, h)
-                return x, y, w, h
+    except subprocess.CalledProcessError as e:
+        print(f"Error in subprocess: {e}")
+        return None, None, None, None
 
         print("Main window not found.")
         return None, None, None, None
