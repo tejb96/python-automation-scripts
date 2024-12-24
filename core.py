@@ -138,14 +138,14 @@ def get_window_geometry(data):
 #     return 0, 0, 865, 830  # Default if no window found
 
 
-# def printWindows():
-#     # Use xdotool to list window titles
-#     windows = subprocess.check_output(["xdotool", "search", "--name", ""]).decode("utf-8")
-#     window_ids = windows.splitlines()
-#     for window_id in window_ids:
-#         title = subprocess.check_output(["xdotool", "getwindowname", window_id]).decode("utf-8").strip()
-#         if title:
-#             print(title)
+def printWindows():
+    # Use xdotool to list window titles
+    windows = subprocess.check_output(["xdotool", "search", "--name", ""]).decode("utf-8")
+    window_ids = windows.splitlines()
+    for window_id in window_ids:
+        title = subprocess.check_output(["xdotool", "getwindowname", window_id]).decode("utf-8").strip()
+        if title:
+            print(title)
 
 
 # print('Operating system:', platform.system())
