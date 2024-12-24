@@ -345,7 +345,7 @@ def doFireMaking(type):
             prompt_area_x = random.randint(212, 212 + 96)
             prompt_area_y = random.randint(790, 790 + 69)
             # pyautogui.click(prompt_area_x, prompt_area_y)
-            pyautogui.moveTo(prompt_area_x, prompt_area_y, duration=random.uniform(0.1, 2))
+            pyautogui.moveTo(prompt_area_x, prompt_area_y, duration=random.uniform(0.1, 0.9))
             pyautogui.click(duration=random.uniform(0.01, 0.05))
             print("Log added")  # Debugging log
 

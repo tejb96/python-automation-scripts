@@ -773,20 +773,22 @@ def spaces(a):
         pyautogui.press('space')
 
 
+import pyautogui
+import cv2
+import numpy as np
+
+
 def skill_lvl_up():
     counter = 0
 
     # Capture the specific region using pyautogui.screenshot
     screenshot = pyautogui.screenshot(region=(0, 735, 450, 140))
 
-    # Convert the screenshot to a PIL Image
-    img_rgb = screenshot.convert("RGB")
+    # Convert the screenshot to a NumPy array (OpenCV format)
+    img_rgb_cv = np.array(screenshot)
 
-    # Save the screenshot for debugging (optional)
-    img_rgb.save('images/screen.png')
-
-    # Convert the PIL Image to a NumPy array for OpenCV processing
-    img_gray = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2GRAY)
+    # Convert the image to grayscale for template matching
+    img_gray = cv2.cvtColor(img_rgb_cv, cv2.COLOR_RGB2GRAY)
 
     # Load the template for matching
     template = cv2.imread('images/Congrats_flag.png', 0)
@@ -799,11 +801,13 @@ def skill_lvl_up():
 
     # Count matches and draw rectangles around them
     for pt in zip(*loc[::-1]):
-        cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+        cv2.rectangle(img_rgb_cv, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
         counter += 1
 
-    return counter
+    # Save the final image with rectangles
+    cv2.imwrite('images/screen_with_rectangles.png', img_rgb_cv)
 
+    return counter
 
 
 def skill_lvl_up_new():
@@ -1162,7 +1166,7 @@ def Image_Rec_single(image, event, iheight=5, iwidth=5, threshold=0.7, clicker='
         # print(icoord)
 
         # Move the mouse to the coordinates and click
-        b = random.uniform(0.9, 1.5)
+        b = random.uniform(0.3, 0.98)
         pyautogui.moveTo(icoord, duration=b)
         b = random.uniform(0.01, 0.3)
         pyautogui.click(icoord, duration=b, button=clicker)

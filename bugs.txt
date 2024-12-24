@@ -1,5 +1,5 @@
 -skilllvlup in functions line 802 needs to be fixed
-
+-dofiremaking doesnt handle lvl up currently
 
 
 - SOLVED: not detecting that player is already chopping wood
