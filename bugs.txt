@@ -10,6 +10,11 @@
 
 - server.py needs to be checked, woodcutting.py references the server stream
 
+needed on computer
+sudp apt install tesseract-ocr
+sudo apt install python3-opencv
+sudo apt install gnome-screenshot
+and more
 
 
 
