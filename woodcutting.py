@@ -362,7 +362,17 @@ def doFireMaking(type):
         wood_count=0
         # Break if no more wood is available
         if wood_count <= 0:
-            break
+            if skill_lvl_up() != 0:
+                actions = 'leveled up...'
+                random_breaks(0.2, 3)
+                pyautogui.press('space')
+                random_breaks(0.1, 3)
+                pyautogui.press('space')
+                a = random.randrange(0, 2)
+                # print(a)
+                spaces(a)
+            else:
+                break
 
     actions = 'Finished Adding Logs to Fire'
 
@@ -412,7 +422,18 @@ def doFireMaking(type):
 def doCutting(cutting, color, Take_Human_Break):
     global cutting_text, actions, coords
     cutting=cutting.strip().lower()
-    if cutting != 'woodcutting' and cutting != 'uoodcutting' and cutting != 'voodcutting' and cutting != 'joodcuttine' and cutting != 'foodcuttir' and cutting != 'foodcuttin' and cutting != 'joodcuttinc' or cutting == 'NOT woodcutting'or cutting== 'Not woodcutting' or cutting == 'not woodcutting':
+
+    if skill_lvl_up() != 0:
+        actions = 'leveled up...'
+        random_breaks(0.2, 3)
+        pyautogui.press('space')
+        random_breaks(0.1, 3)
+        pyautogui.press('space')
+        a = random.randrange(0, 2)
+        # print(a)
+        spaces(a)
+
+    elif cutting != 'woodcutting' and cutting != 'uoodcutting' and cutting != 'voodcutting' and cutting != 'joodcuttine' and cutting != 'foodcuttir' and cutting != 'foodcuttin' and cutting != 'joodcuttinc' or cutting == 'NOT woodcutting'or cutting== 'Not woodcutting' or cutting == 'not woodcutting':
         cutting_text = 'Not Cutting'
         random_breaks(0.2, 3)
         coords = find_Object(color, 0, 100, 800, 700)
@@ -424,15 +445,7 @@ def doCutting(cutting, color, Take_Human_Break):
         time.sleep(click_tree)
     else:
         time.sleep(2)
-    if skill_lvl_up() != 0:
-        actions = 'leveled up...'
-        random_breaks(0.2, 3)
-        pyautogui.press('space')
-        random_breaks(0.1, 3)
-        pyautogui.press('space')
-        a = random.randrange(0, 2)
-        # print(a)
-        spaces(a)
+
     if Take_Human_Break:
         c = random.triangular(0.1, 5, 0.5)
         time.sleep(c)
