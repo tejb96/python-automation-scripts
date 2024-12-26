@@ -242,16 +242,15 @@ def random_quests():
 
 
 def resize_quick():
-    left = 40
-    top = 49
-    right = 105
-    bottom = 67
+    left = 0+5
+    top = 69+23
+    w = 130
+    h = 20
 
-    with mss.mss(display=":0") as sct:
-        monitor = {"top": top, "left": left, "width": right - left, "height": bottom - top}
-        screenshot = sct.grab(monitor)
-        img = Image.frombytes("RGB", (screenshot.width, screenshot.height), screenshot.rgb)
-        img.save('images/screen_resize.png', 'png')
+    screenshot_path='images/screen_resize.png'
+    screenshot = pyautogui.screenshot(region=(left, top, w, h))
+    screenshot.save(screenshot_path)
+    print(f"Screenshot saved as '{screenshot_path}'")
 
 
 
