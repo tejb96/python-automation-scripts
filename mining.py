@@ -257,9 +257,10 @@ def powerminer_text(ore, num, Take_Human_Break=False, Run_Duration_hours=5):
             # print_progress(time_left, spot, mined_text, powerlist, ore, actions)
             random_breaks(0.2, 0.7)
         mined_text = Image_to_Text('thresh', 'textshot.png')
+        print('260',mined_text)
         # print_progress(time_left, spot, mined_text, powerlist, ore, actions)
-        if mined_text.strip().lower() != 'mining' and mined_text.strip().lower() != 'mininq':
-            mined_text = 'Not Mining'
+        if mined_text.strip().lower() != 'mining' and mined_text != 'Mininq' or mined_text == 'NOT mining':
+            # mined_text = 'Not Mining'
             # print_progress(time_left, spot, mined_text, powerlist, ore, actions)
             # random_breaks(0.05, 0.1)
             spot = findarea_single(num, 150, 150)
@@ -306,7 +307,7 @@ if __name__ == "__main__":
     amber = 8
 
     # --------- CHANGE TO RUN FOR AMOUNT OF HOURS ----------------
-    Run_Duration_hours = 0.1
+    Run_Duration_hours = 1
 
     # | ore | marker color | take break | how long to run for in hours
     powerminer_text(clay, red, Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)

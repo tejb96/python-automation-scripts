@@ -250,7 +250,7 @@ def resize_quick():
     screenshot_path='images/screen_resize.png'
     screenshot = pyautogui.screenshot(region=(left, top, w, h))
     screenshot.save(screenshot_path)
-    print(f"Screenshot saved as '{screenshot_path}'")
+    # print(f"Screenshot saved as '{screenshot_path}'")
 
 
 
