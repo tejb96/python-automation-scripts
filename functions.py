@@ -186,7 +186,7 @@ def deposit_all_Bank():
 
 
 def invent_crop():
-    return screen_Image(620, 480, 820, 750, 'inventshot.png')
+    return screen_Image(630, 552, 630+200, 552+275, 'inventshot.png')
 
 
 def random_inventory():
@@ -1266,7 +1266,7 @@ def image_Rec_clicker(image, event, iheight=5, iwidth=5, threshold=0.7, clicker=
     if playarea:
         screen_Image(0, 0, 600, 750)
     else:
-        screen_Image(620, 480, 820, 750)
+        screen_Image(630, 552, 630+200, 552+275)
     img_rgb = cv2.imread('images/screenshot.png')
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
     template = cv2.imread('images/' + image, 0)
@@ -1283,8 +1283,8 @@ def image_Rec_clicker(image, event, iheight=5, iwidth=5, threshold=0.7, clicker=
             iflag = False
         else:
             if playarea == False:
-                cropx = 620
-                cropy = 480
+                cropx = 630
+                cropy = 552
             else:
                 cropx = 0
                 cropy = 0

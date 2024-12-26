@@ -117,16 +117,22 @@ def Miner_Image():
     screen_Image(150, 150, 600, 750, 'images/miner_img.png')
 
 
-def drop_ore():
+def drop_ore(ore_type):
     global actions
     actions = "drop ore."
     invent_crop()
     drop_item()
-    image_Rec_clicker(r'copper_ore.png', 'dropping item', threshold=0.8, playarea=False)
-    image_Rec_clicker(r'clay_ore.png', 'dropping item', threshold=0.8, playarea=False)
-    image_Rec_clicker(r'coal_ore.png', 'dropping item', threshold=0.8, playarea=False)
-    image_Rec_clicker(r'iron_ore.png', 'dropping item', threshold=0.8, playarea=False)
-    image_Rec_clicker(r'tin_ore.png', 'dropping item', threshold=0.8, playarea=False)
+    if ore_type == 5:
+        image_Rec_clicker(r'clay_ore.png', 'dropping item', threshold=0.8, playarea=False)
+
+    if ore_type== 3:
+        image_Rec_clicker(r'iron_ore.png', 'dropping item', threshold=0.8, playarea=False)
+
+    # image_Rec_clicker(r'copper_ore.png', 'dropping item', threshold=0.8, playarea=False)
+    #
+    # image_Rec_clicker(r'coal_ore.png', 'dropping item', threshold=0.8, playarea=False)
+    #
+    # image_Rec_clicker(r'tin_ore.png', 'dropping item', threshold=0.8, playarea=False)
     release_drop_item()
     # print("dropping ore done")
     return "drop ore done"
@@ -226,6 +232,7 @@ def print_progress(time_left, spot, mined_text, powerlist, ore, actions):
 
 def powerminer_text(ore, num, Take_Human_Break=False, Run_Duration_hours=5):
     global spot, mined_text, time_left, powerlist, actions, powerlist, t_end, gem_count, ore_count, clue_count
+
     powerlist = ['tin', 'copper', 'coal', 'iron', 'gold', 'clay', 'red', 'green', 'amber']
     print("Will break in: %.2f" % (ibreak / 60) + " minutes |", "Mine Ore Selected:", powerlist[ore])
     t1 = Thread(target=timer_countdown)
@@ -253,7 +260,7 @@ def powerminer_text(ore, num, Take_Human_Break=False, Run_Duration_hours=5):
         if inventory > 27:
             actions = 'dropping ore starting...'
             # print_progress(time_left, spot, mined_text, powerlist, ore, actions)
-            actions = drop_ore()
+            actions = drop_ore(ore)
             # print_progress(time_left, spot, mined_text, powerlist, ore, actions)
             random_breaks(0.2, 0.7)
         mined_text = Image_to_Text('thresh', 'textshot.png')
@@ -310,6 +317,6 @@ if __name__ == "__main__":
     Run_Duration_hours = 1
 
     # | ore | marker color | take break | how long to run for in hours
-    powerminer_text(clay, red, Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)
+    powerminer_text(iron, red, Take_Human_Break=True, Run_Duration_hours=Run_Duration_hours)
 
     # os.system('shutdown -s -f')
