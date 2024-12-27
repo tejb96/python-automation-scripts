@@ -15,16 +15,24 @@ def take_screenshot_of_game_window():
     # w=100
     # h=100
 #chat mssg
-    x = 0
-    y = 735
-    w = 450
-    h = 140
+    # x = 0
+    # y = 735
+    # w = 450
+    # h = 140
 
     #these are to check the inv ss dimensions:
     # x = 630
     # y = 552
     # w = 200
     # h = 275
+
+    #dimensions for minimap
+    x=674
+    y=69
+    w=156
+    h=166
+
+
 
     # Ensure the directory exists
     os.makedirs('pyauto-images', exist_ok=True)

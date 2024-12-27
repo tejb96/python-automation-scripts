@@ -940,7 +940,10 @@ def max_point(x, y, radius):
 
 
 def mini_map_image(image, iwidth=0, iheight=0, threshold=0.7, clicker='left', xspace=0, yspace=0, Debug=True):
-    screen_Image(661, 27, 826, 190, 'mini_map.png')
+    screenshot_path = 'mini_map.png'
+    screenshot = pyautogui.screenshot(region=(674, 69, 156, 166))
+    screenshot.save(screenshot_path)
+    # screen_Image(661, 27, 826, 190, 'mini_map.png')
     img_rgb = cv2.imread('images/mini_map.png')
     img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
     template = cv2.imread('images/' + image, 0)
